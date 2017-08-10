@@ -16,15 +16,23 @@ ActiveRecord::Schema.define(version: 20170810145446) do
   enable_extension "plpgsql"
 
   create_table "authorizations", force: :cascade do |t|
+    t.integer "user_id"
     t.string "provider"
     t.string "uid"
-    t.integer "user_id"
+    t.string "name"
+    t.string "nickname"
+    t.string "email"
+    t.string "image"
+    t.string "token"
+    t.string "secret"
+    t.boolean "expires"
+    t.datetime "expires_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name"
+    t.string "username"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

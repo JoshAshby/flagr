@@ -10,11 +10,10 @@ module.exports = {
         loader: 'css-loader',
         options: {
           minimize: env.NODE_ENV === 'production',
-          modules: true,
-          localIdentName: '[path][name]__[local]--[hash:base64:5]'
+          //modules: true,
+          //localIdentName: '[path][name]__[local]--[hash:base64:5]'
         }
       },
-      { loader: 'css-loader', options: { minimize: env.NODE_ENV === 'production' } },
       { loader: 'postcss-loader', options: { sourceMap: true } },
       'resolve-url-loader',
       { loader: 'sass-loader', options: { sourceMap: true } }

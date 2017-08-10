@@ -2,9 +2,9 @@ class User < ApplicationRecord
   has_many :authorizations
 
   def self.create_from_auth_hash! auth_hash
-    username = auth_hash.dig 'user_info', 'name'
+    username = auth_hash.dig 'info', 'name'
 
-    fail "No username available" unless username
+    username ||= "test"
 
     create username: username
   end
