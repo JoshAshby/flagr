@@ -40,6 +40,7 @@ gem "tzinfo-data"
 
 # Admin
 gem "trestle"
+gem "pundit"
 
 # Auth
 gem "omniauth-twitter"
@@ -73,6 +74,8 @@ group :development, :test do
   gem "binding_of_caller"
   gem "guard"
   gem "guard-yard"
+
+  gem "mailcatcher"
 end
 
 group :test do

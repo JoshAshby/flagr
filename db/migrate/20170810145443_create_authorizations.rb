@@ -1,9 +1,20 @@
 class CreateAuthorizations < ActiveRecord::Migration[5.1]
   def change
     create_table :authorizations do |t|
+      t.integer :user_id
+
       t.string :provider
       t.string :uid
-      t.integer :user_id
+
+      t.string :name
+      t.string :nickname
+      t.string :email
+      t.string :image
+
+      t.string :token
+      t.string :secret
+      t.boolean :expires
+      t.timestamp :expires_at
 
       t.timestamps
     end

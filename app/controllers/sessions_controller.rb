@@ -1,6 +1,9 @@
 class SessionsController < ApplicationController
+  skip_before_action :verify_authenticity_token, only: :create
+
+  # https://seesparkbox.com/foundry/simulating_social_login_with_omniauth
   def create
-    @auth = Authorization.find_or_create_from_auth_hash(auth, current_user)
+    @auth = Authorization.find_or_create_from_auth_hash(auth_hash, user: current_user)
 
     # TODO: Handle not found
     self.current_user = @auth.user
