@@ -9,6 +9,22 @@ class Authorization < ApplicationRecord
     return auth if auth
 
     user ||= User.create_from_auth_hash! auth_hash
-    Authorization.create user: user, uid: auth_hash['uid'], provider: auth_hash['provider']
+
+    info = auth_hash['info']
+    creds = auth_hash['credentials']
+
+    Authorization.create(
+      user: user,
+      provider: auth_hash['provider'],
+      uid: auth_hash['uid'],
+      name: info['name'],
+      nickname: info['nickname'],
+      email: info['email'],
+      image: info['image'],
+      token: creds['token'],
+      secret: creds['secret'],
+      expires: creds['expires'],
+      expires_at: creds['expires_at']
+    )
   end
 end
