@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170810233426) do
+ActiveRecord::Schema.define(version: 20170811051602) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "authorizations", force: :cascade do |t|
-    t.integer "user_id"
+    t.bigint "user_id", null: false
     t.string "provider"
     t.string "uid"
     t.string "name"
@@ -29,14 +29,27 @@ ActiveRecord::Schema.define(version: 20170810233426) do
     t.datetime "expires_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_authorizations_on_user_id"
   end
 
   create_table "bookmarks", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "webpage_id"
+    t.bigint "user_id", null: false
+    t.bigint "webpage_id", null: false
     t.datetime "last_seen_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_bookmarks_on_user_id"
+    t.index ["webpage_id"], name: "index_bookmarks_on_webpage_id"
+  end
+
+  create_table "scrapes", force: :cascade do |t|
+    t.bigint "webpage_id", null: false
+    t.string "language"
+    t.text "body"
+    t.text "links", default: [], array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["webpage_id"], name: "index_scrapes_on_webpage_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -47,9 +60,12 @@ ActiveRecord::Schema.define(version: 20170810233426) do
 
   create_table "webpages", force: :cascade do |t|
     t.string "raw_uri"
-    t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "authorizations", "users"
+  add_foreign_key "bookmarks", "users"
+  add_foreign_key "bookmarks", "webpages"
+  add_foreign_key "scrapes", "webpages"
 end

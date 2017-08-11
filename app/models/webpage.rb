@@ -1,7 +1,6 @@
 class Webpage < ApplicationRecord
   has_many :bookmarks
-
-  update_index("webpages") { self }
+  has_many :scrapes
 
   def uri
     @uri ||= Addressable::URI.parse(raw_uri)

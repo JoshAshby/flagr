@@ -57,6 +57,8 @@ gem "nokogiri"
 gem "loofah"
 gem "ruby-readability"
 gem "stopwords-filter"
+gem "robotstxt-parser", require: "robotstxt"
+gem "addressable"
 
 gem "foreman"
 

@@ -1,7 +1,7 @@
 class CreateAuthorizations < ActiveRecord::Migration[5.1]
   def change
     create_table :authorizations do |t|
-      t.integer :user_id
+      t.references :user, foreign_key: true, null: false
 
       t.string :provider
       t.string :uid
