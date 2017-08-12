@@ -1,3 +1,6 @@
+require "extraction_service"
+require "fetcher"
+
 class ScrapeWebpageJob < ApplicationJob
   queue_as :default
 

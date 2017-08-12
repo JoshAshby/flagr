@@ -1,5 +1,5 @@
 class Scrape < ApplicationRecord
   belongs_to :webpage
 
-  update_index('scrapes') { self }
+  update_index('webpages#webpage') { webpage }
 end

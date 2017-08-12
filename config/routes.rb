@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   root "pages#main"
 
   get "/home", to: "pages#home"
+  resources :bookmarks
 
   match "/auth/:provider/callback", to: "sessions#create", via: [:get, :post]
 end

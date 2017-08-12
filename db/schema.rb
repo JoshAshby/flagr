@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(version: 20170811051602) do
   create_table "bookmarks", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "webpage_id", null: false
+    t.text "tags", default: [], array: true
     t.datetime "last_seen_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -45,8 +46,8 @@ ActiveRecord::Schema.define(version: 20170811051602) do
   create_table "scrapes", force: :cascade do |t|
     t.bigint "webpage_id", null: false
     t.string "language"
-    t.text "body"
     t.text "links", default: [], array: true
+    t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["webpage_id"], name: "index_scrapes_on_webpage_id"
