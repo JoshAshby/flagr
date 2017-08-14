@@ -1,44 +1,51 @@
 require "extraction_service"
-require "fetcher"
+require "fetch_service"
 
 class ScrapeWebpageJob < ApplicationJob
   queue_as :default
 
-  attr_reader :uri, :res
-
-  def perform(uri)
-    @uri = Addressable::URI.parse(uri)
-
-    return unless allowed?
-
-    res = scrape
-    webpage = Webpage.find_or_create_by(raw_uri: uri)
-
-    extracted = ExtractionService.new(uri: uri, body: res.body).extract!
-
-    webpage.scrapes.create(**extracted)
+  rescue_from FaradayMiddleware::RedirectLimitReached, Faraday::ConnectionFailed, Faraday::TimeoutError, URI::InvalidURIError do |exception|
+    Rails.logger.error "Problem fetching #{ @webpage.parsed_uri.to_s } #{ exception }"
   end
 
-  def connection
-    @connection ||= Fetcher.new
+  def perform(webpage:)
+    @webpage = webpage
+
+    if in_timeout?
+      self.class.set(wait: (timeout + jitter).to_i).perform_later(webpage: @webpage)
+      return
+    else
+      Redis.current.setex key, (30 + jitter).to_i, "true"
+    end
+
+    @webpage.scrapes.create(**extracted)
   end
 
-  def allowed?
-    res = connection.get uri + "/robots.txt"
-    body = res.body || ""
+  protected
 
-    return true if res.status == 404
+  def key
+   @key ||= [ "timeout", @webpage.parsed_uri.host ].join ":"
+  end
 
-    parser = Robotstxt.parse body, connection.user_agent
+  def timeout
+    @timeout ||= Redis.current.ttl key
+  end
 
-    parser.allowed? uri.to_s
-  rescue Faraday::TimeoutError, URI::InvalidURIError => e
-    Rails.logger.error "Problem checking the robot.txt for #{ uri.to_s } #{ e }"
+  def jitter
+    @jitter ||= (rand * 10)
+  end
+
+  def in_timeout?
+    return false if timeout <= 0
+
+    true
   end
 
   def scrape
-    connection.get uri
-  rescue FaradayMiddleware::RedirectLimitReached, Faraday::TimeoutError, URI::InvalidURIError => e
-    Rails.logger.error "Problem fetching body for #{ uri.to_s } #{ e }"
+    @scrape ||= FetchService.new(uri: @webpage.parsed_uri).fetch!
+  end
+
+  def extracted
+    @extracted ||= ExtractionService.new(uri: @webpage.parsed_uri, body: scrape.body).extract!
   end
 end

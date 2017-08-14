@@ -1,5 +1,7 @@
+require "stopwords"
+
 class ExtractionService
-  attr_reader :uri, :body
+  attr_reader :uri, :body, :result
 
   def initialize uri:, body:
     @uri = uri
@@ -7,14 +9,29 @@ class ExtractionService
   end
 
   def extract!
-    {
+    @result ||= {
       language: language,
+      title: title,
       links: links,
-      body: content
+      body: body,
+      content: content.squeeze(" "),
+      cleaned: cleaned.join(" ")
     }
   end
 
   private
+
+  def cleaned
+    @cleaned ||= [].tap do |array|
+      stopword_filter = Stopwords::Snowball::Filter.new 'en'
+
+      content.gsub(/[^a-zA-Z\s]/, ' ').downcase.split.each do |word|
+        next if word.length < 2
+        next if stopword_filter.stopword? word
+        array << word
+      end
+    end
+  end
 
   def nokogiri
     @nokogiri_document ||= Nokogiri::HTML.parse body
@@ -42,6 +59,10 @@ class ExtractionService
 
   def language
     @language ||= extract_language
+  end
+
+  def title
+    nokogiri.xpath("//title").text
   end
 
   def extract_links

@@ -1,11 +1,12 @@
 class WebpagesIndex < Chewy::Index
   define_type Webpage do
-    field :uri, type: "keyword", value: ->{ raw_uri }
-    field :host, type: "keyword", value: ->{ uri.hostname }
+    field :uri, type: "keyword", value: ->{ uri }
+    field :host, type: "keyword", value: ->{ parsed_uri.hostname }
 
     field :scrape_id, type: "integer", value: ->{ latest_scrape&.id }
 
-    field :body, type: "text", term_vector: "yes", value: ->{ latest_scrape&.body }
+    field :title, type: "text", term_vector: "yes", value: ->{ latest_scrape&.title }
+    field :body, type: "text", term_vector: "yes", value: ->{ latest_scrape&.cleaned }
     field :links, type: "keyword", value: ->{ latest_scrape&.links }
     field :language, type: "keyword", value: ->{ latest_scrape&.language }
 

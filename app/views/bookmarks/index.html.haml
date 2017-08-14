@@ -3,6 +3,7 @@
 %table
   %thead
     %tr
+      %th Title
       %th
       %th
       %th
@@ -10,6 +11,7 @@
   %tbody
     - @bookmarks.each do |bookmark|
       %tr
+        %td= bookmark.webpage.latest_scrape.title
         %td= link_to 'Show', bookmark
         %td= link_to 'Edit', edit_bookmark_path(bookmark)
         %td= link_to 'Destroy', bookmark, method: :delete, data: { confirm: 'Are you sure?' }

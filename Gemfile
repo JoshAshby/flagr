@@ -40,7 +40,7 @@ gem "tzinfo-data"
 
 # Admin
 gem "trestle"
-gem "pundit"
+gem "pundit", github: "elabs/pundit"
 
 # Auth
 gem "omniauth-twitter"

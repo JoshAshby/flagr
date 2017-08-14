@@ -6,5 +6,10 @@
         - @bookmark.errors.full_messages.each do |message|
           %li= message
 
+  = f.text_field :tags
+
+  = f.fields_for :webpage, @bookmark.webpage do |webpage_f|
+    = webpage_f.text_field :raw_uri
+
   .actions
     = f.submit 'Save'

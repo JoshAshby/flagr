@@ -9,4 +9,8 @@ class User < ApplicationRecord
 
     create username: username
   end
+
+  def owner_of? record
+    record.user_id == self.id
+  end
 end

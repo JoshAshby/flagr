@@ -1,3 +1,5 @@
+require "faraday_middleware/response/follow_redirects"
+
 class Fetcher
   extend Forwardable
 
@@ -15,8 +17,8 @@ class Fetcher
       builder.use Faraday::Response::Logger, Rails.logger
       builder.use FaradayMiddleware::FollowRedirects, limit: 3
 
-      # builder.adapter :typhoeus
-      builder.adapter Faraday.default_adapter
+      # builder.adapter Faraday.default_adapter
+      builder.adapter :excon
     end
   end
 
